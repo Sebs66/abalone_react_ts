@@ -1,0 +1,37 @@
+.row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.row1 {
+    grid-column-start: 3;
+    grid-column-end: 8;
+}
+
+.row2 {
+    grid-column-start: 2;
+    grid-column-end: 8;
+    position: relative;
+    left: 7%;
+}
+
+.row3 {
+    grid-column-start: 2;
+    grid-column-end: 9;
+}
+
+.row4 {
+    grid-column-start: 1;
+    grid-column-end: 9;
+    position:relative;
+    left:7%;
+}
+
+.row5 {
+    grid-column-start: 1;
+    grid-column-end: 10;
+}
