@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 //* Context using Board object!
 import {createContext, useState, useEffect } from 'react';
-import Board from '../classes/Board';
+import HexagonBoard from '../classes/HexagonBoard'; 
 
 interface BoardContextValue {
     baseBoard: number[][],
-    board:Board,
+    board:HexagonBoard,
     activePiece: undefined|string,
     availableMoves:string[],
-    setBoard: React.Dispatch<React.SetStateAction<Board>>,
+    setBoard: React.Dispatch<React.SetStateAction<HexagonBoard>>,
     setActivePiece: React.Dispatch<React.SetStateAction<string|undefined>>,
     setAvailableMoves: React.Dispatch<React.SetStateAction<string[]>>,
     activatePieceClick:(coord:string)=>void,
-    movePieceClick:(newCoord:string,prevCoord:string)=>void,
-    getAvailableMoves:(board:Board,activePiece:string)=>void
+    movePieceClick:(prevCoord:string|undefined,newCoord:string)=>void,
+    getAvailableMovesCoords:(board:HexagonBoard,activePiece:string)=>string[]
 } 
 
 const defaultValue = {
     baseBoard: [[]],
-    board:Board.newGame(),
+    board:HexagonBoard.newGame(),
     activePiece:undefined,
     availableMoves:[],
     setBoard: ()=>{},
@@ -26,13 +26,13 @@ const defaultValue = {
     setAvailableMoves: ()=>{},
     activatePieceClick: () => {},
     movePieceClick: ()=>{},
-    getAvailableMoves: ()=>{}
+    getAvailableMovesCoords: ()=>[]
 };
 
 const BoardContext = createContext<BoardContextValue>(defaultValue);
 
 function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the provider.
-    const [board,setBoard] = useState(Board.newGame());
+    const [board,setBoard] = useState(HexagonBoard.newGame()); /// Board.newGame(4) -> Para llenarlo de pelotas.
     const [activePiece,setActivePiece] = useState<string|undefined>(undefined);
     const [availableMoves,setAvailableMoves] = useState([] as string[]);
 
@@ -48,14 +48,20 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         [0,0,0,0,0] // 5 slots
     ];
 
-    function getAvailableMoves(board:Board,activePiece:string){
-        if (!activePiece) return /// En caso de que no haya pieza activa.
-        const adjacentSlots = board.getAdjacentCoords(activePiece); /// retorna coordenadas alrededor de la activa.
+    function getAvailableMovesCoords(board:HexagonBoard,activePiece:string):string[]{
+        if (!activePiece) return [] /// En caso de que no haya pieza activa.
+        console.log('getAvailableMovesCoords()')
+        const activeHex = board.getAt(activePiece);
+        const adjacentHexs = board.getNeighborsHexs(activeHex); /// retorna coordenadas alrededor de la activa.
+        console.log(adjacentHexs.map(hex=>hex.Coords))
         /// Ahora veamos de que color es la activa.
-        const posibleMoves = adjacentSlots.filter((coord:string)=>{
-            const slot = board.getAt(coord);
-            return !slot ;
+        const posibleMoves = adjacentHexs.filter((hexagon)=>{
+            return !hexagon.value;
+        }).map((hex)=>{
+            const coords = hex.cartesianCoords;
+            return `${coords.row}${coords.col}`
         });
+        console.log(posibleMoves)
         return posibleMoves;
     }
 
@@ -64,9 +70,10 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         setActivePiece(coord);
     }
     
-    const movePieceClick = (newCoord:string,prevCoord:string)=>{
+    const movePieceClick = (prevCoord:string|undefined,newCoord:string)=>{
+        if (!prevCoord) return
         console.log(`move ${prevCoord} -> ${newCoord}`)
-        const player = board.getAt(prevCoord); /// Gets the color.
+        const player = board.getAt(prevCoord).value; /// Gets the color.
         board.setAt(prevCoord,0);
         board.setAt(newCoord,player)
         setBoard(board.getCopy());
@@ -84,7 +91,7 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         activePiece, setActivePiece,
         availableMoves, setAvailableMoves,
         activatePieceClick, movePieceClick,
-        getAvailableMoves
+        getAvailableMovesCoords
     }}>
         {children}
     </BoardContext.Provider>

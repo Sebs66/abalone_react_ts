@@ -3,10 +3,11 @@ import BoardContext from "./context/board";
 import TableBoard from './components/TableBoard';
 
 function App(){
-  const {setAvailableMoves,board,activePiece} = useContext(BoardContext);
+  const {setAvailableMoves,getAvailableMovesCoords,board,activePiece} = useContext(BoardContext);
 
   useEffect(()=>{
-    const moves = board.getAvailableMoves(activePiece)
+    if (!activePiece) return
+    const moves: string[] = getAvailableMovesCoords(board,activePiece);
     setAvailableMoves(moves);
   },[activePiece]);
 

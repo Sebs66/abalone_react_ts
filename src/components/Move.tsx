@@ -3,10 +3,10 @@ import BoardContext from "../context/board";
 
 function Move({coord}:{coord:string}){
     const {movePieceClick, activePiece} = useContext(BoardContext);
-
-    return <div className='piece move' onClick={()=>(movePieceClick(coord,activePiece))}>
+    return <div className='piece move' onClick={()=>(movePieceClick(activePiece,coord))}>
         {<span>{coord}</span>}
     </div>
+
 
 }
 

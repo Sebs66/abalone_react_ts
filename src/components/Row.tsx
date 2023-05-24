@@ -5,10 +5,13 @@ import { useContext } from 'react';
 import Piece from './Piece';
 import Slot from './Slot';
 import Move from './Move';
-
 import BoardContext from '../context/board';
 
-type Props = {row:(string|number)[],index:number,rowPosition:number}
+
+import { HexagonInterface } from './utils';
+
+
+type Props = {row:HexagonInterface[],index:number,rowPosition:number}
 
 function Row ({row, index, rowPosition}:Props){
     const {board, availableMoves} = useContext(BoardContext);
@@ -16,7 +19,7 @@ function Row ({row, index, rowPosition}:Props){
         const coord = `${index}${index_col}`
         /// Will do pieces and slots in parallel. This way Slot is independent from Piece, and it woll not rerender every time!. fix flickering!
         let type;
-        if (board.getAt(coord)){
+        if (board.getAt(coord).value){
             type = <Piece key={`P${coord}`} coord={coord}></Piece>
         } else if (availableMoves?.includes(coord)){
             type = <Move key={`M${coord}`} coord={coord}></Move>
