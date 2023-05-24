@@ -13,7 +13,7 @@ class Hexagon {
     get hexCoords(){
         return {q:this.q,r:this.r,s:this.s}
     }
-    get Coords(){
+    get coords(){
         return `${this.row}${this.col}`
     }
 

@@ -52,17 +52,13 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         if (!activePiece) return [] /// En caso de que no haya pieza activa.
         console.log('getAvailableMovesCoords()')
         const activeHex = board.getAt(activePiece);
-        const adjacentHexs = board.getNeighborsHexs(activeHex); /// retorna coordenadas alrededor de la activa.
-        console.log(adjacentHexs.map(hex=>hex.Coords))
+        const adjacentHexs = board.getNeighborsHexs(activeHex);
+        const proyectedHexs = board.getProyectedHexs(activeHex);
+        console.log(adjacentHexs.map(hex=>hex.coords))
         /// Ahora veamos de que color es la activa.
-        const posibleMoves = adjacentHexs.filter((hexagon)=>{
-            return !hexagon.value;
-        }).map((hex)=>{
-            const coords = hex.cartesianCoords;
-            return `${coords.row}${coords.col}`
-        });
-        console.log(posibleMoves)
-        return posibleMoves;
+        const posibleProyected = proyectedHexs.map(hex=>hex.coords);
+        console.log(posibleProyected)
+        return posibleProyected;
     }
 
     const activatePieceClick = (coord:string)=>{
@@ -83,6 +79,14 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         setActivePiece(undefined);
         setAvailableMoves([]);
     },[board]);
+
+    useEffect(()=>{
+        console.log(activePiece)
+        if (activePiece){
+            setAvailableMoves(getAvailableMovesCoords(board,activePiece))
+        } else setAvailableMoves([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[activePiece])
 
     return (
     <BoardContext.Provider value={{

@@ -110,6 +110,11 @@ class HexagonBoard {
         return this.getHexByCoords(row,col)
     }
 
+    /**
+     * 
+     * @param hex an hexagon object. It can be a dummy one or one in the actual board.
+     * @returns an array of all the neightbours of that hexagon hexCoords.
+     */
     getNeighborsCoords(hex:Hexagon){
         const {q,r,s} = hex.hexCoords;
         const coords = Object.keys(this.direction_vectors).map((dirVect)=>{
@@ -119,6 +124,27 @@ class HexagonBoard {
             return posibleHex;
         });
         return coords.filter((coord)=>{return coord != undefined })
+    }
+    
+    getProyectedHexs(hex:Hexagon){
+        console.log('getProyectedHexs')
+        const hexagons:Hexagon[] = []
+        Object.values(this.direction_vectors).forEach((hexVect:Hexagon)=>{
+            let nextHex = this.nextInDir(hex,hexVect)
+            console.log(nextHex?.coords)
+            while (nextHex){ /// adds Hexs until the end of the board.
+                hexagons.push(nextHex)
+                nextHex = this.nextInDir(nextHex,hexVect)
+            }
+        });
+        return hexagons
+    }
+
+    private nextInDir(hex:Hexagon,hexVect:Hexagon){
+        const {q:qHex,r:rHex,s:sHex} = hex.hexCoords;
+        const {q:qVect,r:rVect,s:sVect} = hexVect.hexCoords
+        const nextHex = this.getHexByHexCoords(qHex+qVect,rHex+rVect,sHex+sVect);
+        return nextHex;
     }
 
     private direction_vectors: {[key:string]:Hexagon} = {
