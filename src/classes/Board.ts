@@ -1,18 +1,9 @@
+import HexagonBoard from './HexagonBoard';
+
 class Board {
-    board : (number|string)[][]
-    constructor(){
-        this.board = 
-        [
-            [0,0,0,0,0], // 5 slots
-            [0,0,0,0,0,0], // 6 slots
-            [0,0,0,0,0,0,0], // 7 slots
-            [0,0,0,0,0,0,0,0], // 8 slots
-            [0,0,0,0,0,0,0,0,0], // 9 slots
-            [0,0,0,0,0,0,0,0], // 8 slots
-            [0,0,0,0,0,0,0], // 7 slots
-            [0,0,0,0,0,0], // 6 slots
-            [0,0,0,0,0] // 5 slots
-        ]            
+    board: HexagonBoard;
+    constructor(levels:number){ /// q-r-s.
+        this.board = new HexagonBoard(levels)  
     }
 
     setAt(coord:string,value:number|string){
@@ -137,8 +128,9 @@ class Board {
     getAvailableMoves(activePiece:string|undefined):string[]{
         if (!activePiece) return []
         const adjacentSpots = this.getAdjacentCoords(activePiece);
+        console.log('adjacentSpots: ',adjacentSpots)
         const directMoves = adjacentSpots.reduce((acc:string[],coord2)=>{
-            const move = this._getDirectMove(activePiece,coord2);
+            const move = this.getDirectMove(activePiece,coord2);
             if (move) acc.push(move)
             return acc
         },[]);
@@ -150,16 +142,16 @@ class Board {
         //! falta ver el resto de los posibles movimientos!
     }
 
-    _getDirectMove(coord1:string,coord2:string):string|undefined{ /// Recursive!
+    private getDirectMove(coord1:string,coord2:string):string|undefined{ /// Recursive!
         //const player = this.getAt(coord1);
         if (!coord2) return undefined
         if (this.getAt(coord2) === 0){return coord2}
-        const {direction,way} = this._getDirection(coord1,coord2);
-        const coord3 = this._getNextSameDir(coord2,direction,way);
-        return this._getDirectMove(coord2,coord3)
+        const {direction,way} = this.getDirection(coord1,coord2);
+        const coord3 = this.getNextSameDir(coord2,direction,way);
+        return this.getDirectMove(coord2,coord3)
     }
 
-    _getDirection(coord1:string,coord2:string){
+    private getDirection(coord1:string,coord2:string){
         /// Can be horizontal, topLeft-bottomRight , topRight-bottomLeft.
         const c1 = parseInt(coord1)
         const c2 = parseInt(coord2)
@@ -194,13 +186,43 @@ class Board {
         return {direction,way}
     }
 
-    _getNextSameDir(coord:string,direction:string,way:string){ /// Gets the closest next coord in the same direction.
+    private getNextSameDir(coord:string,direction:string,way:string){ /// Gets the closest next coord in the same direction.
         const possibleCoords = this.getAdjacentCoords(coord);
         const filteredCoord = possibleCoords.filter((coord2)=>{
-            const {direction:direction2,way:way2} = this._getDirection(coord,coord2);
+            const {direction:direction2,way:way2} = this.getDirection(coord,coord2);
             return direction === direction2 && way === way2
         });
         return filteredCoord[0];
+    }
+
+    getDistance(coord1:string,coord2:string){
+        console.log('getDistance',coord1,coord2)
+        /// Only distances allowed are in straight line.
+        const c1 = parseInt(coord1);
+        const c2 = parseInt(coord2);
+        const distance = Math.abs(c1-c2)
+        console.log(distance);
+        const dir = this.getDirection2(coord1,coord2)
+        console.log(dir)
+    }
+
+    getDirection2(coord1,coord2){
+        const row1 = Number(coord1[0]);
+        const row2 = Number(coord2[0]);
+        const col1 = Number(coord1[1]);
+        const col2 = Number(coord2[0]);
+        console.log(`${coord1}->${coord2}`);
+        let dirY:string;
+        let dirX:string;
+        if (row2 > row1) dirY = 'down' /// Down
+        else if (row2 < row1) dirY = 'up' /// Up
+        else dirY = '0' /// Neither.
+        if (col2 < col1) dirX = 'left'
+        else dirX = 'right'
+        console.log(dirX,dirY)
+        /// Constrains on directions.
+
+
     }
 }
 
