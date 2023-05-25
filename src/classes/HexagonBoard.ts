@@ -4,6 +4,8 @@ import Hexagon from "./Hexagon";
 
 class HexagonBoard {
     board : Hexagon[][];
+    directions = ['right','topRight','topLeft','left','bottomLeft','bottomRight'];
+    
     constructor(public levels:number){ /// q-r-s.
         this.board = [];
         let aux = 0; /// to decrease the starting number.
@@ -126,12 +128,35 @@ class HexagonBoard {
         return coords.filter((coord)=>{return coord != undefined })
     }
     
-    getProyectedHexs(hex:Hexagon){
+    getFirstEmptyHexsPerDir(hex:Hexagon){
+        /// Vamos a cambiarlo para que nos entregue el resultado por dirección. Luego será más fácil hacer otros cálculos.
         console.log('getProyectedHexs')
         const hexagons:Hexagon[] = []
         Object.values(this.direction_vectors).forEach((hexVect:Hexagon)=>{
             let nextHex = this.nextInDir(hex,hexVect)
             console.log(nextHex?.coords)
+            while (nextHex){ /// adds Hexs until the end of the board.
+                if (!nextHex.value){ /// look if its empty.
+                    hexagons.push(nextHex)
+                    break
+                }
+                nextHex = this.nextInDir(nextHex,hexVect)
+            }
+        });
+        return hexagons
+    }
+
+    /**
+     * Original function. Gives all proyected hex in the 6 directions one array.
+     * @param hex 
+     * @returns 
+     */
+    getAllProyectedHex(hex:Hexagon){
+        //console.log('getProyectedHexs')
+        const hexagons:Hexagon[] = []
+        Object.values(this.direction_vectors).forEach((hexVect:Hexagon)=>{
+            let nextHex = this.nextInDir(hex,hexVect)
+            //console.log(nextHex?.coords)
             while (nextHex){ /// adds Hexs until the end of the board.
                 hexagons.push(nextHex)
                 nextHex = this.nextInDir(nextHex,hexVect)
@@ -139,6 +164,51 @@ class HexagonBoard {
         });
         return hexagons
     }
+
+    getProyectedHexsByTypePerDir(hex:Hexagon){
+        const hexagonsPerDir: {[key:string]:Hexagon[]} = {}
+        Object.keys(this.direction_vectors).forEach((dirString:string)=>{
+            const dirVect = this.direction_vectors[dirString];
+            let nextHex = this.nextInDir(hex,dirVect);
+            while (nextHex){
+                if (!hexagonsPerDir[dirString]) hexagonsPerDir[dirString] = [];
+                hexagonsPerDir[dirString].push(nextHex);
+                nextHex = this.nextInDir(nextHex,dirVect);
+            }
+        });
+
+        const infoPerDir:{[key:string]:{[key:string]:Hexagon[]}} = {}
+        /// Calculate per both ways dir, up to 3 spots.
+        Object.keys(hexagonsPerDir).forEach((dirString)=>{
+            const hexsPerDir = hexagonsPerDir[dirString];
+            const opponentContinuousHexs:Hexagon[] = [];
+            const sameContinuousHexs:Hexagon[] = [];
+            const emptyContinuousHex: Hexagon[] =[]; /// This is different. stops at the first empty spot, but ignores same team.
+            for (const hexPerDir of hexsPerDir){ /// Opponents.
+                if (!hexPerDir.value || hexPerDir.value === hex.value) break /// Exit as soon as no opponent is encounter.
+                opponentContinuousHexs.push(hexPerDir);
+            }
+            for (const hexPerDir of hexsPerDir){ /// Same Team.
+                if (hexPerDir.value !== hex.value) break;
+                sameContinuousHexs.push(hexPerDir);
+            }
+            for (const hexPerDir of hexsPerDir){ /// Empty
+                if (hexPerDir.value && hexPerDir.value !== hex.value) break; /// If we encounter an opponent.
+                if (!hexPerDir.value){
+                    emptyContinuousHex.push(hexPerDir);
+                    break; /// Exit after first empy spot.
+                }
+
+            }
+            infoPerDir[dirString] = {
+                'opponent':opponentContinuousHexs,
+                'same': sameContinuousHexs,
+                'empty': emptyContinuousHex
+            }
+        });
+        return infoPerDir
+    }
+
 
     private nextInDir(hex:Hexagon,hexVect:Hexagon){
         const {q:qHex,r:rHex,s:sHex} = hex.hexCoords;
@@ -154,7 +224,8 @@ class HexagonBoard {
             left: new Hexagon(-1,0,1),
             bottomLeft: new Hexagon(-1,1,0),
             bottomRight: new Hexagon(0,1,-1)
-        }
+    }
+
 
     setAtCoords(row:number,column:number,value:string|number){
         //console.log('setAtCoords',row,column)

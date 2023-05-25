@@ -2,6 +2,7 @@
 //* Context using Board object!
 import {createContext, useState, useEffect } from 'react';
 import HexagonBoard from '../classes/HexagonBoard'; 
+import { HexagonInterface } from '../components/utils';
 
 interface BoardContextValue {
     baseBoard: number[][],
@@ -50,16 +51,36 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
 
     function getAvailableMovesCoords(board:HexagonBoard,activePiece:string):string[]{
         if (!activePiece) return [] /// En caso de que no haya pieza activa.
-        console.log('getAvailableMovesCoords()')
+        //console.log('getAvailableMovesCoords()')
         const activeHex = board.getAt(activePiece);
-        const adjacentHexs = board.getNeighborsHexs(activeHex);
-        const proyectedHexs = board.getProyectedHexs(activeHex);
-        console.log(adjacentHexs.map(hex=>hex.coords))
-        /// Ahora veamos de que color es la activa.
+        const proyectedHexs = board.getAllProyectedHex(activeHex);
         const posibleProyected = proyectedHexs.map(hex=>hex.coords);
-        console.log(posibleProyected)
+        /// Debemos ver si esque estamos proximos a una pieza del adversario. En caso de estarlo, debemos calcular la cantidad de piezas juntas suyas y las nuestras en dicha dirección.
+        /// Debemos tambien cortar en el primer hex que esté disponible.
+        //console.log(posibleProyected)
         return posibleProyected;
     }
+
+    function getAvailableMovesCoords_V2(board:HexagonBoard,activePiece:string){
+        if (!activePiece) return [];
+        console.log('getAvailableMovesCoords_V2()');
+        const activeHex = board.getAt(activePiece);
+        const proyectedByTypePerDir = board.getProyectedHexsByTypePerDir(activeHex);
+        console.log('proyectedByTypePerDir')
+        console.log(proyectedByTypePerDir);
+        //! FOR NOW!
+        /// Get only empty possibilities
+        const emptyAvailables = Object.keys(proyectedByTypePerDir).reduce((acc:HexagonInterface[],dirString)=>{
+            //console.log(dirString)
+            const empty = proyectedByTypePerDir[dirString]['empty']
+            const same = proyectedByTypePerDir[dirString]['same']
+            if (same.length <= 2) acc.push(...empty)
+            return acc
+        },[]);
+        return emptyAvailables.map(hex=>hex.coords);
+    }
+
+
 
     const activatePieceClick = (coord:string)=>{
         if (activePiece === coord) return setActivePiece(undefined)
@@ -83,7 +104,8 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
     useEffect(()=>{
         console.log(activePiece)
         if (activePiece){
-            setAvailableMoves(getAvailableMovesCoords(board,activePiece))
+            //setAvailableMoves(getAvailableMovesCoords(board,activePiece))
+            setAvailableMoves(getAvailableMovesCoords_V2(board,activePiece))
         } else setAvailableMoves([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[activePiece])

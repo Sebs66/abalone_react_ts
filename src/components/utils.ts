@@ -6,11 +6,12 @@ interface HexagonInterface {
     q:number,
     r:number,
     s:number,
-    value:number,
+    value:number|string,
     row:number,
     col:number,
-    hexCoords():()=>{q:number,r:number,s:number},
-    cartesianCoords():()=>{row:number,col:number}
+    get hexCoords():{q:number,r:number,s:number},
+    get cartesianCoords():{row:number,col:number},
+    get coords():string
 }
 
 
