@@ -165,7 +165,89 @@ class HexagonBoard {
         return hexagons
     }
 
-    getProyectedHexsByTypePerDir(hex:Hexagon){
+    getProyectedHexsPerDir(hex:Hexagon){
+        /// Give all hex until a empty space is encounter or end of board.
+        const hexagonsPerDir: {[key:string]:(Hexagon|undefined)[]} = {}
+        Object.keys(this.direction_vectors).forEach((dirString:string)=>{
+            const dirVect = this.direction_vectors[dirString];
+            let nextHex = this.nextInDir(hex,dirVect);
+            if (!hexagonsPerDir[dirString]) hexagonsPerDir[dirString] = [];
+            while (nextHex){
+                hexagonsPerDir[dirString].push(nextHex);
+                nextHex = this.nextInDir(nextHex,dirVect);
+            }
+            hexagonsPerDir[dirString].push(undefined) //* marks the end of the board.
+        });
+        return hexagonsPerDir
+    }
+
+    /**
+     * Receives an array with hexes in only one direction. undefined flags the end of the board.
+     * @param hexes 
+     * Returns the posible hex move in that direction.
+     */
+    calculateMovesInStraightDir(activeHex:Hexagon,hexes:(Hexagon|undefined)[]){
+        /// If next ball is opponnent or undefined, no movement.
+        /// If next are same team, but more than 2, no movement.
+        /// If next are same team < 2 & then an empty, movement.
+        /// If next are same team < 2 and next opponent. See if opponent is < 2 and return movement if same > opponent
+        let continuosSameTeam = 0;
+        let continuosOpponentTeam = 0;
+        let prev = 'same' /// flags current to reset if needed.
+        let availableHexagon:Hexagon|undefined;
+        let firstOpponentHex:Hexagon|undefined;
+        //console.log('hexes',hexes)
+        for (const hex of hexes){
+            if (!hex){
+                availableHexagon = undefined;
+                //console.log('end of board')
+                break;
+            }
+            else if (hex.value == activeHex.value && prev=='same'){ /// same team
+                //console.log('SameTeam');
+                continuosSameTeam += 1;
+                availableHexagon = hex;
+            }
+            else if (hex.value == activeHex.value && prev!= 'same'){ /// If same team after opponent team.
+                continuosSameTeam = 0;
+                availableHexagon = undefined /// cannot move.
+                break; 
+            }
+            else if (hex.value != 0 && hex.value != activeHex.value) { /// Opponent
+                //console.log('OpponentTeam')
+                continuosOpponentTeam += 1;
+                if (!firstOpponentHex) firstOpponentHex = hex; /// Saves first opponent encounter.
+                prev = 'opponent' /// Updates flag.
+                availableHexagon = hex
+            }
+            /*             
+            else if (hex.value != activeHex.value && hex.value === 0){ ///
+                /// Conditions to see of it can push!
+                if (continuosOpponentTeam < continuosSameTeam+1 && continuosOpponentTeam < 3 && hexes[0]){
+                    availableHexagon = firstOpponentHex;
+                }
+            }
+            */
+            else{ /// Empty stop.
+                console.log('empty!')
+                console.log('continuosSameTeam',continuosSameTeam,'continuosOpponentTeam',continuosOpponentTeam);
+                if (continuosOpponentTeam && (continuosSameTeam+1) > continuosOpponentTeam){
+                    availableHexagon = firstOpponentHex;
+                    break
+                }
+                availableHexagon = hex;
+                break;
+            }
+        }
+
+        if (continuosSameTeam >2 || continuosOpponentTeam > 2) return undefined
+        console.log('availableHexagon',availableHexagon?.coords)
+        return availableHexagon
+    }
+
+    getProyectedHexsByTypePerDir_DEPRECATED(hex:Hexagon){ //! DEPRECATED.
+        console.log('DEPRECATED')
+        /// Give all hex until a empty space is encounter or end of board.
         const hexagonsPerDir: {[key:string]:Hexagon[]} = {}
         Object.keys(this.direction_vectors).forEach((dirString:string)=>{
             const dirVect = this.direction_vectors[dirString];

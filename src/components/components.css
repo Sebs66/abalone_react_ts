@@ -48,8 +48,11 @@
     width: inherit;
     border-radius: 50%;
     background-color: rgba(56, 56, 226, 0.576);
+    /* background-color:rgba(165, 42, 42, 0.408); */
 }
-
+.move.orange {
+    background-color: coral;
+}
 .piece.b {
     background-color: black;
 }
