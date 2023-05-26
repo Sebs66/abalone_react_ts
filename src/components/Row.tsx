@@ -1,6 +1,6 @@
 import './components.css'
 import './Row.css'
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import Piece from './Piece';
 import Slot from './Slot';

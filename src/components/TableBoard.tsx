@@ -1,5 +1,5 @@
 import './components.css';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import PiecesContext from '../context/board';
 import Row from './Row';
 

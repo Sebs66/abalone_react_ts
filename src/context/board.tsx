@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 //* Context using Board object!
-import {createContext, useState, useEffect } from 'react';
+import React, {createContext, useState, useEffect } from 'react';
 import HexagonBoard from '../classes/HexagonBoard'; 
 
 interface BoardContextValue {

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import BoardContext from "./context/board";
 import TableBoard from './components/TableBoard';
 
