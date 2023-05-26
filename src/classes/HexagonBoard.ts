@@ -220,17 +220,9 @@ class HexagonBoard {
                 prev = 'opponent' /// Updates flag.
                 availableHexagon = hex
             }
-            /*             
-            else if (hex.value != activeHex.value && hex.value === 0){ ///
-                /// Conditions to see of it can push!
-                if (continuosOpponentTeam < continuosSameTeam+1 && continuosOpponentTeam < 3 && hexes[0]){
-                    availableHexagon = firstOpponentHex;
-                }
-            }
-            */
             else{ /// Empty stop.
-                console.log('empty!')
-                console.log('continuosSameTeam',continuosSameTeam,'continuosOpponentTeam',continuosOpponentTeam);
+                //console.log('empty!')
+                //console.log('continuosSameTeam',continuosSameTeam,'continuosOpponentTeam',continuosOpponentTeam);
                 if (continuosOpponentTeam && (continuosSameTeam+1) > continuosOpponentTeam){
                     availableHexagon = firstOpponentHex;
                     break
@@ -241,7 +233,7 @@ class HexagonBoard {
         }
 
         if (continuosSameTeam >2 || continuosOpponentTeam > 2) return undefined
-        console.log('availableHexagon',availableHexagon?.coords)
+        if (continuosSameTeam == 0 && continuosOpponentTeam > 0) return undefined
         return availableHexagon
     }
 

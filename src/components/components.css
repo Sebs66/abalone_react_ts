@@ -28,6 +28,7 @@
 
 .slot span{
     position:fixed;
+    z-index: 2;
 }
 
 .piece {
@@ -36,6 +37,7 @@
     aspect-ratio: 1;
     width: inherit;
     border-radius: 50%;
+    position: relative
 }
 .piece:hover {
     opacity: 0.8;
@@ -50,6 +52,23 @@
     background-color: rgba(56, 56, 226, 0.576);
     /* background-color:rgba(165, 42, 42, 0.408); */
 }
+
+.piece.attacked {
+    background-color: red !important;
+    z-index: 1;
+}
+
+.piece div.attacked{
+    aspect-ratio: 1;
+    width: 90%;
+    border-radius: 50%;
+    background-color: rgb(0, 0, 0);
+    opacity: 0.7;
+    position:absolute;
+    bottom:5%;
+    left: 5%
+}
+
 .move.orange {
     background-color: coral;
 }

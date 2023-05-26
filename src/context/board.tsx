@@ -56,7 +56,7 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         const proyectedHexs = board.getProyectedHexsPerDir(activeHex);
         const moves: string[] = []
         Object.keys(proyectedHexs).forEach((dirString)=>{
-            console.log(dirString);
+            //console.log(dirString);
             const moveInStraightDir = board.calculateMovesInStraightDir(activeHex,proyectedHexs[dirString]);
             if (moveInStraightDir) moves.push(moveInStraightDir.coords)
         });
