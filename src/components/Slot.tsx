@@ -1,6 +1,6 @@
 import './components.css';
 import BoardContext from '../context/board';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 function Slot({coord}:{coord:string}){
     const {activatePieceClick,activePiece,setActivePiece,board} = useContext(BoardContext);
