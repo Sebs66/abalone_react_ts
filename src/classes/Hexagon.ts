@@ -10,8 +10,8 @@ class Hexagon {
         this.value = value
     }
 
-    get hexCoords(){
-        return {q:this.q,r:this.r,s:this.s}
+    get hexCoords() {
+        return {q:this.q,r:this.r,s:this.s} 
     }
     get coords(){
         return `${this.row}${this.col}`

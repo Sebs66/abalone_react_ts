@@ -58,12 +58,21 @@
     z-index: 1;
 }
 
-.piece div.attacked{
+.piece div.attacked-b{
     aspect-ratio: 1;
     width: 90%;
     border-radius: 50%;
     background-color: rgb(0, 0, 0);
     opacity: 0.7;
+    position:absolute;
+    bottom:5%;
+    left: 5%
+}
+.piece div.attacked-w{
+    aspect-ratio: 1;
+    width: 90%;
+    border-radius: 50%;
+    background-color: rgb(255, 255, 255);
     position:absolute;
     bottom:5%;
     left: 5%

@@ -198,22 +198,22 @@ class HexagonBoard {
         let firstOpponentHex:Hexagon|undefined;
         //console.log('hexes',hexes)
         for (const hex of hexes){
-            if (!hex){
+            if (!hex && prev=='same'){
                 availableHexagon = undefined;
                 //console.log('end of board')
                 break;
             }
-            else if (hex.value == activeHex.value && prev=='same'){ /// same team
+            else if (hex && hex.value == activeHex.value && prev=='same'){ /// Same team
                 //console.log('SameTeam');
                 continuosSameTeam += 1;
                 availableHexagon = hex;
             }
-            else if (hex.value == activeHex.value && prev!= 'same'){ /// If same team after opponent team.
+            else if (hex && hex.value == activeHex.value && prev!= 'same'){ /// If same team after opponent team.
                 continuosSameTeam = 0;
                 availableHexagon = undefined /// cannot move.
                 break; 
             }
-            else if (hex.value != 0 && hex.value != activeHex.value) { /// Opponent
+            else if (hex && hex.value != 0 && hex.value != activeHex.value) { /// Opponent
                 //console.log('OpponentTeam')
                 continuosOpponentTeam += 1;
                 if (!firstOpponentHex) firstOpponentHex = hex; /// Saves first opponent encounter.
@@ -356,6 +356,50 @@ class HexagonBoard {
             return acc
         },{'w':[],'b':[]});
         return objectPositions
+    }
+
+    attack(activeHex:Hexagon,attackedHex:Hexagon){
+        const direction = this.getDirectionOf(activeHex,attackedHex);
+        if (!direction) return
+        console.log(direction)
+        console.log('activeHex',activeHex.value)
+        const temp = attackedHex.value
+        this.setAt(attackedHex.coords,activeHex.value);
+        this.setAt(activeHex.coords,0);
+
+        
+        /// Find the next empty or undefined behind attacked piece.
+        let nextPiece:Hexagon|undefined = attackedHex;
+        while (nextPiece){
+            nextPiece = this.nextInDir(nextPiece,this.direction_vectors[direction]);
+            if (!nextPiece) break
+            if (nextPiece.value === 0){
+                this.setAt(nextPiece.coords,temp)
+                break
+            }
+        }
+        console.log(this.board)
+        return this;
+    }
+
+    getDirectionOf(hex1:Hexagon,hex2:Hexagon){
+        let hexEqualCoord: string|undefined = undefined; 
+        for (const key in hex1.hexCoords){
+            if (Object.keys(hex2.hexCoords).includes(key) && hex2.hexCoords[key as 'q'|'r'|'s'] === hex1.hexCoords[key as 'q'|'r'|'s']){
+                //console.log(`Propiedad ${key} es igual`)
+                hexEqualCoord = key
+            }
+        }
+        if (hexEqualCoord === 'q'){
+            if (hex1.coords > hex2.coords) return 'topLeft'
+            return 'bottomRight'
+        } else if (hexEqualCoord === 'r'){
+            if (hex1.coords > hex2.coords) return 'left'
+            return 'right'
+        } else if (hexEqualCoord === 's'){
+            if (hex1.coords > hex2.coords) return 'topRight'
+            return 'bottomLeft'
+        } else return undefined
     }
 }
 
