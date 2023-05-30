@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import BoardContext from "../context/board";
 
 function Piece({coord}:{coord:string}){
-    const {activatePieceClick,board, setBoard, activePiece,setActivePiece, availableMoves} = useContext(BoardContext);
+    const {displayCoords,activatePieceClick,board, activePiece,setActivePiece, availableMoves} = useContext(BoardContext);
     const attacked = availableMoves.includes(coord)
     const isActive = coord === activePiece?'active':'';
     const player = board.getAt(coord).value;
@@ -18,8 +18,9 @@ function Piece({coord}:{coord:string}){
         setActivePiece(undefined); /// re renders.
     }
     return <div className={`piece ${isActive} ${player} ${attacked?'attacked':''}`} onClick={handleOnClick}>
-        {<span>{coord}</span>}
+        {isActive &&<div className={`active-${player}`}></div>}
         {attacked &&<div className={`${attacked?'attacked':''}-${player}`}></div>}
+        {displayCoords && <span>{coord}</span>}
     </div>
 }
 

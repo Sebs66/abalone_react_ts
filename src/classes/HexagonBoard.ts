@@ -237,6 +237,66 @@ class HexagonBoard {
         return availableHexagon
     }
 
+    /**
+     * 
+     * @param activeHex 
+     * @returns object with directions as keys and array of hexes of the block of team as values. 
+     */
+    private getSameTeamBlocksPerDir(activeHex:Hexagon){
+        const allHex = this.getProyectedHexsPerDir(activeHex);
+        const continuousTeamHexs: {[key:string]:Hexagon[]} = {};
+        for (const dir of this.directions){
+            const auxArray: Hexagon[] = [activeHex]
+            for (const hex of allHex[dir]){
+                if (!hex) break;
+                else if (hex.value === activeHex.value){
+                    if (auxArray.length >= 3) break /// no need for more than 3 hexes.
+                    auxArray.push(hex)
+                }
+                else break; /// breaks if not continuos.
+            }
+            /// filter for two or three hexes.
+            if (auxArray.length > 1) continuousTeamHexs[dir] = auxArray;
+        }
+        return continuousTeamHexs
+    }
+
+    /**
+     * Checks for lateral moves. Checks from the active piece, all blocks possible to move in lateral way.
+     * @param activeHex 
+     * returns an object with keys as direction and array of empty hex in that direction.
+     */
+    calculateMovesInParalelDir(activeHex:Hexagon){
+        const continuousTeamHexs = this.getSameTeamBlocksPerDir(activeHex) /// object keys: dir
+        const searchs: {[key:string]:string[]} = { /// only certain directions make sense as a block depending on the block originar directions.
+                'topLeft' : ['topRight','left'], 
+                'bottomRight': ['right','bottomLeft'],
+                'left': ['bottomLeft','topLeft'],
+                'right': ['bottomRight','topRight'],
+                'topRight': ['right','topLeft'],
+                'bottomLeft': ['left','bottomRight']
+        }
+        const posibleParalelMoves : string[][] = [];
+        
+        /// Check for continuous contiguous empty spots in each direction.
+        for (const dir of this.directions){
+            if (!continuousTeamHexs[dir]) continue
+            for (const dir2 of searchs[dir]){ /// Only in the dir2s proyected for that dir
+                const auxArray: string[] = [];
+                for (const hex of continuousTeamHexs[dir]){
+                    if (dir2 == dir) continue /// Not consider same dir.
+                    const possibleHex = this.nextInDir(hex,this.direction_vectors[dir2])
+                    if (possibleHex?.value === 0) auxArray.push(possibleHex.coords); /// If empty, add to possibles.
+                    else break; /// not empty, dont test further.
+                }
+                if (auxArray.length > 1){ /// some are empty we can move!
+                    posibleParalelMoves.push(auxArray);
+                }
+            }
+        }
+        return posibleParalelMoves
+    }
+
     getProyectedHexsByTypePerDir_DEPRECATED(hex:Hexagon){ //! DEPRECATED.
         console.log('DEPRECATED')
         /// Give all hex until a empty space is encounter or end of board.
@@ -400,6 +460,34 @@ class HexagonBoard {
             if (hex1.coords > hex2.coords) return 'topRight'
             return 'bottomLeft'
         } else return undefined
+    }
+
+    /**
+     * 
+     * @param coord1 coord of activePiece
+     * @param coordParallel coord of end of parallel move.
+     */
+    parallelMove(piece1:string,movementCoords:string[]){
+        const hex1 = this.getAt(piece1);
+        const destinationHex1 = this.getAt(movementCoords[0]); /// first will always be the corresponding position of piece1.
+        const dir1 = this.getDirectionOf(hex1,destinationHex1)
+        const player = hex1.value;
+        if (!dir1) return
+        movementCoords.forEach((finalCoord)=>{
+            this.setAt(finalCoord,player);
+            const initialHex = this.nextInDir(this.getAt(finalCoord),this.direction_vectors[this.oppositeDirections[dir1]]) as Hexagon
+            this.setAt(initialHex.coords,0);
+        });
+        return this
+    }
+
+    oppositeDirections = {
+        'topLeft':'bottomRight',
+        'bottomRight': 'topLeft',
+        'topRight': 'bottomLeft',
+        'bottomLeft': 'topRight',
+        'right': 'left',
+        'left': 'right'
     }
 }
 

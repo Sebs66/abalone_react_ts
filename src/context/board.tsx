@@ -8,13 +8,15 @@ interface BoardContextValue {
     baseBoard: number[][],
     board:HexagonBoard,
     activePiece: undefined|string,
-    availableMoves:string[],
+    availableMoves:(string|string[])[],
     setBoard: React.Dispatch<React.SetStateAction<HexagonBoard>>,
     setActivePiece: React.Dispatch<React.SetStateAction<string|undefined>>,
-    setAvailableMoves: React.Dispatch<React.SetStateAction<string[]>>,
+    setAvailableMoves: React.Dispatch<React.SetStateAction<(string|string[])[]>>,
     activatePieceClick:(coord:string)=>void,
     movePieceClick:(prevCoord:string|undefined,newCoord:string)=>void,
-    getAvailableMovesCoords:(board:HexagonBoard,activePiece:string)=>string[]
+    movePieceParallelClick:(activePiece:string|undefined,coordParallel:string)=>void,
+    getAvailableMovesCoords:(board:HexagonBoard,activePiece:string)=>(string|string[])[],
+    displayCoords:boolean
 } 
 
 const defaultValue = {
@@ -27,7 +29,9 @@ const defaultValue = {
     setAvailableMoves: ()=>{},
     activatePieceClick: () => {},
     movePieceClick: ()=>{},
-    getAvailableMovesCoords: ()=>[]
+    movePieceParallelClick: ()=>{},
+    getAvailableMovesCoords: ()=>[],
+    displayCoords:true,
 };
 
 const BoardContext = createContext<BoardContextValue>(defaultValue);
@@ -35,7 +39,7 @@ const BoardContext = createContext<BoardContextValue>(defaultValue);
 function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the provider.
     const [board,setBoard] = useState(HexagonBoard.newGame()); /// Board.newGame(4) -> Para llenarlo de pelotas.
     const [activePiece,setActivePiece] = useState<string|undefined>(undefined);
-    const [availableMoves,setAvailableMoves] = useState([] as string[]);
+    const [availableMoves,setAvailableMoves] = useState([] as (string|string[])[]);
 
     const baseBoard =  [
         [0,0,0,0,0], // 5 slots
@@ -49,7 +53,10 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         [0,0,0,0,0] // 5 slots
     ];
 
-    function getAvailableMovesCoords(board:HexagonBoard,activePiece:string):string[]{
+    const displayCoords = true; /// Show coords on tableBoard or not.
+
+
+    function getAvailableMovesCoords(board:HexagonBoard,activePiece:string):(string|string[])[]{
         if (!activePiece) return [] /// En caso de que no haya pieza activa.
         //console.log('getAvailableMovesCoords()')
         const activeHex = board.getAt(activePiece);
@@ -60,8 +67,9 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
             const moveInStraightDir = board.calculateMovesInStraightDir(activeHex,proyectedHexs[dirString]);
             if (moveInStraightDir) moves.push(moveInStraightDir.coords)
         });
-        console.log('moves',moves);
-        return moves;
+        const parallelMoves = board.calculateMovesInParalelDir(activeHex);
+        console.log([...moves, ...parallelMoves])
+        return [...moves,...parallelMoves];
         }
 
     const activatePieceClick = (coord:string)=>{
@@ -77,6 +85,27 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         board.setAt(newCoord,player)
         setBoard(board.getCopy());
     }
+
+    const movePieceParallelClick = (activePiece:string|undefined,parallelCoord:string)=>{
+        if (!activePiece) return
+        console.log(activePiece);
+        console.log(parallelCoord);
+        /// Get the array that we want.
+        const parallelMoves = availableMoves.filter(item=> {return typeof item == 'object'}) as string[][];
+        const parallelMoveBlock = parallelMoves.filter(array=>{return array.includes(parallelCoord)})[0]; /// first one will always be the corresponding to active piece.
+        /// cut the array up to the parallel coord (it returns the whole block!).
+        const parallelMove:string[] = [];
+        for (const coord of parallelMoveBlock){
+            if (coord === parallelCoord){
+                parallelMove.push(coord)
+                break;
+            }
+            parallelMove.push(coord)
+        }
+        board.parallelMove(activePiece,parallelMove);
+        setBoard(board.getCopy())
+    }
+
 
     useEffect(()=>{
         setActivePiece(undefined);
@@ -98,7 +127,9 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
         activePiece, setActivePiece,
         availableMoves, setAvailableMoves,
         activatePieceClick, movePieceClick,
-        getAvailableMovesCoords
+        getAvailableMovesCoords,
+        movePieceParallelClick,
+        displayCoords
     }}>
         {children}
     </BoardContext.Provider>

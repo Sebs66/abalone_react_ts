@@ -4,7 +4,7 @@
     grid-template-columns: repeat(9,1fr);
     row-gap: 10px;
     width: 800px;
-    background-color: aquamarine;
+    background-color: rgb(11, 160, 108);
     flex-direction: column;
 }
 
@@ -26,9 +26,9 @@
     border-radius: 50%;
 }
 
-.slot span{
-    position:fixed;
-    z-index: 2;
+.slot span{ /* Coords */
+    position:absolute;
+    z-index: +10;
 }
 
 .piece {
@@ -52,10 +52,19 @@
     background-color: rgba(56, 56, 226, 0.576);
     /* background-color:rgba(165, 42, 42, 0.408); */
 }
+.moveParallel {
+    padding: 5px;
+    margin: 0 10px 0 10px;
+    aspect-ratio: 1;
+    position: relative;
+    width: inherit;
+    border-radius: 50%;
+    background-color: rgb(252, 88, 0);
+    /* background-color:rgba(165, 42, 42, 0.408); */    
+}
 
 .piece.attacked {
     background-color: red !important;
-    z-index: 1;
 }
 
 .piece div.attacked-b{
@@ -63,7 +72,7 @@
     width: 90%;
     border-radius: 50%;
     background-color: rgb(0, 0, 0);
-    opacity: 0.7;
+
     position:absolute;
     bottom:5%;
     left: 5%
@@ -87,17 +96,36 @@
 
 .piece.b span {
     color: white;
+    position: absolute;
+    z-index: 1;
 }
 
+.piece.w span {
+    position: absolute;
+    z-index: 1;
+}
 .piece.w {
     background-color: white;
 }
 
-.active {
-    opacity:0.8 !important;
-    /*
-    padding: 2px;
-    margin: 0 10px 0 10px;
-    border: 3px solid red;
-    box-sizing: border-box; */
+.piece.active {
+    background-color: rgb(255, 247, 0);
+}
+.piece div.active-w{ /* This is the subelement. */
+    width:90%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    bottom: 5%;
+    left:5%;
+}
+.piece div.active-b{ /* This is the subelement. */
+    width:90%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: black;
+    position: absolute;
+    bottom: 5%;
+    left:5%;
 }
