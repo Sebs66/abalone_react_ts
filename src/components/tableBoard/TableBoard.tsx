@@ -1,6 +1,6 @@
 import './components.css';
 import React,{ useContext } from 'react';
-import PiecesContext from '../context/board';
+import PiecesContext from '../../context/board';
 import Row from './Row';
 
 function TableBoard(){

@@ -6,10 +6,10 @@ import Piece from './Piece';
 import Slot from './Slot';
 import Move from './Move';
 import MoveParallel from './MoveParallel';
-import BoardContext from '../context/board';
+import BoardContext from '../../context/board';
 
 
-import { HexagonInterface } from './utils';
+import { HexagonInterface } from '../utils';
 
 
 type Props = {row:HexagonInterface[],index:number,rowPosition:number}

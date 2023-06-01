@@ -1,0 +1,40 @@
+div.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div.turnsContainer {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(182, 146, 215, 0.715);
+    font-size:xx-large;
+}
+
+div.playersPieces {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+div.playersPieces .piece_info {
+    width: 70px;
+}
+
+.options {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: xx-large;
+    row-gap: 10px;
+}
+
+.options div span {
+    font-size: x-large;
+}
+
+.options div {
+    display: flex;
+}
