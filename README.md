@@ -1,4 +1,4 @@
-# [Deploymet Link](URLsebs.alwaysdata.net)
+# [Deploymet Link](sebs.alwaysdata.net)
 
 ## Description
 A proyect to practice react reactivity building the Abalone board game.
