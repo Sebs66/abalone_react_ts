@@ -89,7 +89,7 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
 
     useEffect(()=>{ /// Win condition.
         const scores = board.getScores();
-        const winCriteria = 1;
+        const winCriteria = 6;
         if (Object.values(scores).includes(winCriteria)){
             //console.log('Game should end');
             scores.w === winCriteria ? setWinner('White'): setWinner('Black');
