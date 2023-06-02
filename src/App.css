@@ -2,3 +2,17 @@ div.content {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
+
+@media screen and (max-width:576px) {
+    div.content {
+        display: flex;
+        flex-direction: column;
+    }
+    .content {
+        height: 90vh;
+        display:flex;
+        flex-direction: column;
+        justify-content: space-around
+    }
+    
+}

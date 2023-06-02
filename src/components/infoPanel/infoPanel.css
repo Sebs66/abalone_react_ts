@@ -39,3 +39,20 @@ div.scoresContainer .playersPieces .piece {
 div.playersPieces .piece_info {
     width: 70px;
 }
+
+@media screen and (max-width:576px) {
+    div.panel {
+        flex-direction: row;
+        background-color:  rgb(182, 146, 215);
+    }
+
+    div.playersPieces .piece_info {
+        width: 40px !important ;
+    }
+    div.scoresContainer {
+        font-size: x-large;
+    }
+    div.turnsContainer {
+        font-size: x-large;
+    }
+}

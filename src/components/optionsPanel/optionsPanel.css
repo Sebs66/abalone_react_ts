@@ -32,3 +32,20 @@ div.playersPieces .piece_info {
 .options div {
     display: flex;
 }
+
+@media screen and (max-width:576px) {
+    div.options {
+        display: grid;
+        grid-template-columns: 2;
+        grid-template-rows: 2;
+    }
+    .options span{
+        grid-row-start: 1;
+        grid-column-start: 1;
+        grid-column-end: 2;
+    }
+    .options div{
+        grid-row-start: 2;
+    }
+    
+}
