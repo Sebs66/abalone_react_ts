@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import BoardContext from "../../context/board";
 
 function Move({coord}:{coord:string}){

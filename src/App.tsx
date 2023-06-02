@@ -1,5 +1,5 @@
 import './App.css'
-import React,{ useContext, useEffect } from "react";
+import { useContext  } from "react";
 import BoardContext from "./context/board";
 import TableBoard from './components/tableBoard/TableBoard';
 import InfoPanel from './components/infoPanel/InfoPanel';

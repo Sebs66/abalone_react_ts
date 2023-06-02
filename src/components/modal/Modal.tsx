@@ -1,6 +1,5 @@
 import './Modal.css'
 
-import React, { useState } from 'react';
 import BoardContext from '../../context/board';
 import { useContext } from 'react';
 
