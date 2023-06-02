@@ -1,5 +1,6 @@
 ## Description
 A proyect to practice react reactivity building the Abalone board game.
+See deployment at sebs.alwaysdata.net
 
 ### Comments.
 Started as a react JS proyect using create-react-app, moved to Typescript & Vite.
