@@ -1,11 +1,11 @@
 import './infoPanel.css'
+import InfoScores from './InfoScores';
 
 import InfoTurns from "./InfoTurns";
-import Options from './Options';
 
 function InfoPanel(){
     return <div className="panel">
-        <Options></Options>
+       <InfoScores></InfoScores>
        <InfoTurns></InfoTurns>
     </div>
 }

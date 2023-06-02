@@ -1,0 +1,33 @@
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position:absolute;
+    height: 99dvh;
+    width: 99dvw;
+    background-color: rgba(127, 255, 212, 0.423);
+    z-index: 9999;
+}
+
+.msgBox {
+    background-color: rgb(182, 146, 215);
+    width: 40vw;
+    height:20vh;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 20px;
+    border: solid 2px black;
+}
+
+.msgBox span {
+    font-size: xx-large;
+}
+
+button{
+    padding: 10px;
+    border-radius: 30px;
+    font-weight: bold;
+    background-color: white;
+}

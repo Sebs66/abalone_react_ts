@@ -52,6 +52,18 @@ class HexagonBoard {
         return board
     }
 
+    newGame(){ ///* Initiates a new abalone game.
+        const board = new HexagonBoard(4);
+        board.setMany(['00','01','02','03','04'],'b');
+        board.setMany(['10','11','12','13','14','15'],'b');
+        board.setMany(['22','23','24'],'b');
+        board.setMany(['62','63','64'],'w');
+        board.setMany(['70','71','72','73','74','75'],'w');
+        board.setMany(['80','81','82','83','84'],'w');
+        //console.log(board)
+        return board
+    }
+
     forEach(callback:(row:Hexagon[],index:number,array:Hexagon[][])=>void){
         this.board.forEach(callback);
     }
@@ -130,11 +142,11 @@ class HexagonBoard {
     
     getFirstEmptyHexsPerDir(hex:Hexagon){
         /// Vamos a cambiarlo para que nos entregue el resultado por dirección. Luego será más fácil hacer otros cálculos.
-        console.log('getProyectedHexs')
+        //console.log('getProyectedHexs')
         const hexagons:Hexagon[] = []
         Object.values(this.direction_vectors).forEach((hexVect:Hexagon)=>{
             let nextHex = this.nextInDir(hex,hexVect)
-            console.log(nextHex?.coords)
+            //console.log(nextHex?.coords)
             while (nextHex){ /// adds Hexs until the end of the board.
                 if (!nextHex.value){ /// look if its empty.
                     hexagons.push(nextHex)
@@ -421,8 +433,8 @@ class HexagonBoard {
     attack(activeHex:Hexagon,attackedHex:Hexagon){
         const direction = this.getDirectionOf(activeHex,attackedHex);
         if (!direction) return
-        console.log(direction)
-        console.log('activeHex',activeHex.value)
+        //console.log(direction)
+        //console.log('activeHex',activeHex.value)
         const temp = attackedHex.value
         this.setAt(attackedHex.coords,activeHex.value);
         this.setAt(activeHex.coords,0);
@@ -438,7 +450,7 @@ class HexagonBoard {
                 break
             }
         }
-        console.log(this.board)
+        //console.log(this.board)
         return this;
     }
 
@@ -461,6 +473,12 @@ class HexagonBoard {
             return 'bottomLeft'
         } else return undefined
     }
+
+    getScores(){
+        const positions = this.getAllPositions();
+        return {'w':14-positions.b.length,'b':14-positions.w.length}
+    }
+
 
     /**
      * 

@@ -1,0 +1,34 @@
+div.panel_2 {
+    grid-column-start: 1;
+    grid-row-start: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div.playersPieces {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+div.playersPieces .piece_info {
+    width: 70px;
+}
+
+.options {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: xx-large;
+    row-gap: 10px;
+}
+
+.options div span {
+    font-size: x-large;
+}
+
+.options div {
+    display: flex;
+}

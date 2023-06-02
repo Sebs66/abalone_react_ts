@@ -5,8 +5,8 @@ import {useContext} from 'react';
 
 function InfoTurns(){
     const {activePlayer} = useContext(BoardContext);
-    console.log('Re render!')
-    console.log(activePlayer)
+    //console.log('Re render!')
+    //console.log(activePlayer)
     return <div className="turnsContainer">
         <span>Current Turn</span>
         {`${activePlayer=='b'? 'Black' : 'White'} player`} 

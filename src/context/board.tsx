@@ -6,16 +6,20 @@ import HexagonBoard from '../classes/HexagonBoard';
 interface BoardContextValue {
     baseBoard: number[][],
     board:HexagonBoard,
-    activePiece: undefined|string,
-    availableMoves:(string|string[])[],
-    activePlayer:string,
-    switchCoords:boolean,
-    switchMovesHelp:boolean,
     setBoard: React.Dispatch<React.SetStateAction<HexagonBoard>>,
+    activePiece: undefined|string,
     setActivePiece: React.Dispatch<React.SetStateAction<string|undefined>>,
+    availableMoves:(string|string[])[],
     setAvailableMoves: React.Dispatch<React.SetStateAction<(string|string[])[]>>,
+    switchCoords:boolean,
     setSwitchCoords: React.Dispatch<React.SetStateAction<boolean>>,
+    switchMovesHelp:boolean,
     setSwitchMovesHelp: React.Dispatch<React.SetStateAction<boolean>>,
+    displayModal:boolean,
+    setDisplayModal: React.Dispatch<React.SetStateAction<boolean>>,
+    activePlayer:string,
+    winner:string|undefined,
+    setWinner:React.Dispatch<React.SetStateAction<string|undefined>>,
     activatePieceClick:(coord:string)=>void,
     movePieceClick:(prevCoord:string|undefined,newCoord:string)=>void,
     movePieceParallelClick:(activePiece:string|undefined,coordParallel:string)=>void,
@@ -26,16 +30,20 @@ interface BoardContextValue {
 const defaultValue = {
     baseBoard: [[]],
     board:HexagonBoard.newGame(),
+    setBoard: ()=>{},
     activePiece:undefined,
+    setActivePiece: () => {},
     availableMoves:[],
+    setAvailableMoves: ()=>{},
     activePlayer:'b',
     switchCoords:false,
-    switchMovesHelp:false,
-    setBoard: ()=>{},
-    setActivePiece: () => {},
-    setAvailableMoves: ()=>{},
     setSwitchCoords: ()=>{},
+    switchMovesHelp:false,
     setSwitchMovesHelp:()=>{},
+    displayModal:false,
+    setDisplayModal:()=>{},
+    winner:undefined,
+    setWinner:()=>{},
     activatePieceClick: () => {},
     movePieceClick: ()=>{},
     movePieceParallelClick: ()=>{},
@@ -52,6 +60,8 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
     const [activePlayer,setActivePlayer] = useState(Math.random()>0.5?'b':'w');
     const [switchCoords, setSwitchCoords] = useState(false);
     const [switchMovesHelp, setSwitchMovesHelp] = useState(true);
+    const [displayModal, setDisplayModal] = useState(false);
+    const [winner,setWinner] = useState<string|undefined>(undefined);
 
     const baseBoard =  [
         [0,0,0,0,0], // 5 slots
@@ -71,12 +81,22 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
     },[board]);
 
     useEffect(()=>{
-        console.log(activePiece)
         if (activePiece){
             setAvailableMoves(getAvailableMovesCoords(board,activePiece))
         } else setAvailableMoves([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[activePiece])
+    },[activePiece]);
+
+    useEffect(()=>{ /// Win condition.
+        const scores = board.getScores();
+        const winCriteria = 1;
+        if (Object.values(scores).includes(winCriteria)){
+            //console.log('Game should end');
+            scores.w === winCriteria ? setWinner('White'): setWinner('Black');
+            setDisplayModal(true);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[activePlayer]);
 
     function getAvailableMovesCoords(board:HexagonBoard,activePiece:string):(string|string[])[]{
         if (!activePiece) return [] /// En caso de que no haya pieza activa.
@@ -145,15 +165,17 @@ function Provider({children}:{children:React.ReactNode}){ /// A wrapper for the 
     <BoardContext.Provider value={{
         baseBoard,
         board,setBoard,
-        activePiece, setActivePiece,
-        availableMoves, setAvailableMoves,
+        activePiece,setActivePiece,
+        availableMoves,setAvailableMoves,
+        winner,setWinner,
         activatePieceClick, movePieceClick,
         getAvailableMovesCoords,
         movePieceParallelClick,
         activePlayer,
         attackPiece,
         switchCoords,setSwitchCoords,
-        switchMovesHelp,setSwitchMovesHelp
+        switchMovesHelp,setSwitchMovesHelp,
+        displayModal,setDisplayModal,
     }}>
         {children}
     </BoardContext.Provider>
