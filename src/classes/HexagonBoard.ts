@@ -203,7 +203,7 @@ class HexagonBoard {
         /// If next are same team, but more than 2, no movement.
         /// If next are same team < 2 & then an empty, movement.
         /// If next are same team < 2 and next opponent. See if opponent is < 2 and return movement if same > opponent
-        let continuosSameTeam = 0;
+        let continuosSameTeam = 1; /// adds active piece!
         let continuosOpponentTeam = 0;
         let prev = 'same' /// flags current to reset if needed.
         let availableHexagon:Hexagon|undefined;
@@ -243,9 +243,9 @@ class HexagonBoard {
                 break;
             }
         }
-
-        if (continuosSameTeam >2 || continuosOpponentTeam > 2) return undefined
-        if (continuosSameTeam == 0 && continuosOpponentTeam > 0) return undefined
+        if (continuosSameTeam == continuosOpponentTeam) return undefined /// we add one because continuousSameTeam is not counting the active piece.
+        if (continuosSameTeam > 3 || continuosOpponentTeam > 2) return undefined
+        if (continuosSameTeam == 1 && continuosOpponentTeam > 0) return undefined
         return availableHexagon
     }
 
